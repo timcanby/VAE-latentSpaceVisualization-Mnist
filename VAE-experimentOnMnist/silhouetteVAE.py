@@ -77,18 +77,18 @@ class VAE(nn.Module):
         import math
         mean, var = self._encoder(x)
 
-        silhouetteoss=self.customize(mean, var,15)
+        silhouetteoss=self.customize(mean, var,100)
         z = self._sample_z(mean, var)
         y = self._decoder(z)
         xent_loss = nn.MSELoss()
         vecloss = xent_loss(x,y)
         lower_bound = [silhouetteoss,vecloss]
         #check the KL value between 2 distribution
-        '''
+
         global list
         KL = -0.5 * torch.mean(torch.sum(1 + torch.log(var) - mean ** 2 - var))
-        list.append([np.float64(KL.cpu().detach().numpy())/10000, silhouetteoss])
-'''
+        list.append([-np.float64(KL.cpu().detach().numpy())/10, silhouetteoss*10000])
+
         return sum(lower_bound)
 import numpy as np
 from torch import optim
